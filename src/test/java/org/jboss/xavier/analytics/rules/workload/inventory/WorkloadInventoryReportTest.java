@@ -25,7 +25,7 @@ public class WorkloadInventoryReportTest extends BaseIntegrationTest {
 
     public WorkloadInventoryReportTest()
     {
-        super("WorkloadInventoryKSession0", "org.jboss.xavier.analytics.rules.workload.inventory.*", 53);
+        super("WorkloadInventoryKSession0", "org.jboss.xavier.analytics.rules.workload.inventory.*", 54);
     }
 
     @Test
@@ -1631,7 +1631,7 @@ public class WorkloadInventoryReportTest extends BaseIntegrationTest {
         Map<String, Object> results = Utils.executeCommandsAndGetResults(kieSession, commands);
 
         // check that the number of rules fired is what you expect
-        Assert.assertEquals(10, results.get(NUMBER_OF_FIRED_RULE_KEY));
+        Assert.assertEquals(11, results.get(NUMBER_OF_FIRED_RULE_KEY));
         // check the names of the rules fired are what you expect
         Utils.verifyRulesFiredNames(this.agendaEventListener,
                 // BasicFields
@@ -1645,7 +1645,7 @@ public class WorkloadInventoryReportTest extends BaseIntegrationTest {
                 // Workloads
                 "Workloads_Websphere", "SsaEnabled_System_Services_Present",
                 // Target
-                "Target_RHV", "Target_OSP", "Target_OCP",
+                "Target_RHV", "Target_OSP", "Target_OCP", "Target_RedHatJBossEAP",
                 // Complexity
                 "No_Flag_Supported_OS"
         );
@@ -1678,10 +1678,11 @@ public class WorkloadInventoryReportTest extends BaseIntegrationTest {
         Assert.assertEquals(new SimpleDateFormat("yyyy-M-dd'T'hh:mm:ss.S").parse("2019-09-18T14:52:45.871Z"), workloadInventoryReportModel.getCreationDate());
         // Flags
         // Targets
-        Assert.assertEquals(3, workloadInventoryReportModel.getRecommendedTargetsIMS().size());
+        Assert.assertEquals(4, workloadInventoryReportModel.getRecommendedTargetsIMS().size());
         Assert.assertTrue(workloadInventoryReportModel.getRecommendedTargetsIMS().contains("RHV"));
         Assert.assertTrue(workloadInventoryReportModel.getRecommendedTargetsIMS().contains("OSP"));
         Assert.assertTrue(workloadInventoryReportModel.getRecommendedTargetsIMS().contains("OCP"));
+        Assert.assertTrue(workloadInventoryReportModel.getRecommendedTargetsIMS().contains("Red Hat JBoss EAP"));
         // Complexity
         Assert.assertEquals(WorkloadInventoryReportModel.COMPLEXITY_EASY, workloadInventoryReportModel.getComplexity());
         // Workloads
@@ -1737,7 +1738,7 @@ public class WorkloadInventoryReportTest extends BaseIntegrationTest {
         Map<String, Object> results = Utils.executeCommandsAndGetResults(kieSession, commands);
 
         // check that the number of rules fired is what you expect
-        Assert.assertEquals(10, results.get(NUMBER_OF_FIRED_RULE_KEY));
+        Assert.assertEquals(11, results.get(NUMBER_OF_FIRED_RULE_KEY));
         // check the names of the rules fired are what you expect
         Utils.verifyRulesFiredNames(this.agendaEventListener,
                 // BasicFields
@@ -1751,7 +1752,7 @@ public class WorkloadInventoryReportTest extends BaseIntegrationTest {
                 // Workloads
                 "Workloads_Weblogic", "SsaEnabled_System_Services_Present",
                 // Target
-                "Target_RHV", "Target_OSP", "Target_OCP",
+                "Target_RHV", "Target_OSP", "Target_OCP", "Target_RedHatJBossEAP",
                 // Complexity
                 "No_Flag_Supported_OS"
         );
@@ -1784,10 +1785,11 @@ public class WorkloadInventoryReportTest extends BaseIntegrationTest {
         Assert.assertEquals(new SimpleDateFormat("yyyy-M-dd'T'hh:mm:ss.S").parse("2019-09-18T14:52:45.871Z"), workloadInventoryReportModel.getCreationDate());
         // Flags
         // Targets
-        Assert.assertEquals(3, workloadInventoryReportModel.getRecommendedTargetsIMS().size());
+        Assert.assertEquals(4, workloadInventoryReportModel.getRecommendedTargetsIMS().size());
         Assert.assertTrue(workloadInventoryReportModel.getRecommendedTargetsIMS().contains("RHV"));
         Assert.assertTrue(workloadInventoryReportModel.getRecommendedTargetsIMS().contains("OSP"));
         Assert.assertTrue(workloadInventoryReportModel.getRecommendedTargetsIMS().contains("OCP"));
+        Assert.assertTrue(workloadInventoryReportModel.getRecommendedTargetsIMS().contains("Red Hat JBoss EAP"));
         // Complexity
         Assert.assertEquals(WorkloadInventoryReportModel.COMPLEXITY_EASY, workloadInventoryReportModel.getComplexity());
         // Workloads
@@ -5199,7 +5201,7 @@ public class WorkloadInventoryReportTest extends BaseIntegrationTest {
         Map<String, Object> results = Utils.executeCommandsAndGetResults(kieSession, commands);
 
         // check that the number of rules fired is what you expect
-        Assert.assertEquals(14, results.get(NUMBER_OF_FIRED_RULE_KEY));
+        Assert.assertEquals(15, results.get(NUMBER_OF_FIRED_RULE_KEY));
         // check the names of the rules fired are what you expect
         Utils.verifyRulesFiredNames(this.agendaEventListener,
                 // BasicFields
@@ -5221,6 +5223,7 @@ public class WorkloadInventoryReportTest extends BaseIntegrationTest {
                 "Target_RHV",
                 "Target_OSP",
                 "Target_RHEL",
+                "Target_RedHatJBossEAP",
                 // Complexity
                 "No_Flag_Convertible_OS"
         );
@@ -5237,5 +5240,145 @@ public class WorkloadInventoryReportTest extends BaseIntegrationTest {
         Assert.assertTrue(workloadInventoryReportModel.getWorkloads().stream().anyMatch(target -> target.toLowerCase().contains("Oracle JDK 11".toLowerCase())));
         Assert.assertTrue(workloadInventoryReportModel.getWorkloads().stream().anyMatch(target -> target.toLowerCase().contains("Oracle Weblogic".toLowerCase())));
         Assert.assertFalse(workloadInventoryReportModel.getRecommendedTargetsIMS().stream().anyMatch(target -> target.toLowerCase().contains("OpenJDK".toLowerCase())));
+        Assert.assertTrue(workloadInventoryReportModel.getRecommendedTargetsIMS().stream().anyMatch(target -> target.toLowerCase().contains("Red Hat JBoss EAP".toLowerCase())));
+    }
+
+    @Test
+    public void testCentOSWithWeblogic_ThenJBossEAPTarget() throws ParseException {
+        //Basic Fields
+        VMWorkloadInventoryModel vmWorkloadInventoryModel = new VMWorkloadInventoryModel();
+
+        vmWorkloadInventoryModel.setProvider("provider");
+        vmWorkloadInventoryModel.setVmName("vmName");
+        vmWorkloadInventoryModel.setDiskSpace(100000001L);
+        vmWorkloadInventoryModel.setMemory(4096L);
+        vmWorkloadInventoryModel.setCpuCores(4);
+        vmWorkloadInventoryModel.setGuestOSFullName("CentOS Linux release 7.6.1810 (Core)");
+        vmWorkloadInventoryModel.setOsProductName("productName");
+        vmWorkloadInventoryModel.setProduct("product");
+        vmWorkloadInventoryModel.setVersion("6.5");
+        vmWorkloadInventoryModel.setScanRunDate(new SimpleDateFormat("yyyy-M-dd'T'hh:mm:ss.S").parse("2019-09-18T14:52:45.871Z"));
+
+        List<String> systemServicesNames = new ArrayList<>();
+        systemServicesNames.add("unix_service");
+        systemServicesNames.add("wls_adminmanager");
+        vmWorkloadInventoryModel.setSystemServicesNames(systemServicesNames);
+
+        // define the list of commands you want to be executed by Drools
+        Map<String, Object> facts = new HashMap<>();
+        facts.put("vmWorkloadInventoryModel", vmWorkloadInventoryModel);
+        List<Command> commands = new ArrayList<>();
+        commands.addAll(Utils.newInsertCommands(facts));
+        commands.add(CommandFactory.newFireAllRules(NUMBER_OF_FIRED_RULE_KEY));
+        commands.add(CommandFactory.newQuery(QUERY_IDENTIFIER, "GetWorkloadInventoryReports"));
+        Map<String, Object> results = Utils.executeCommandsAndGetResults(kieSession, commands);
+
+        // check that the number of rules fired is what you expect
+        Assert.assertEquals(14, results.get(NUMBER_OF_FIRED_RULE_KEY));
+        // check the names of the rules fired are what you expect
+        Utils.verifyRulesFiredNames(this.agendaEventListener,
+                // BasicFields
+                "Copy basic fields and agenda controller",
+                // ReasonableDefaults
+                "Fill 'datacenter' field with reasonable default",
+                "Fill 'cluster' field with reasonable default",
+                "Fill 'host_name' field with reasonable default",
+                "Fill 'Insights' field with reasonable default",
+                "Fill 'osFamily' field with 'Other'",
+                // OSFamily
+                "Centos_OSFamily",
+                // Flags
+                // Workloads
+                "Workloads_Weblogic",
+                "SsaEnabled_System_Services_Present",
+                // Target
+                "Target_RHV",
+                "Target_OSP",
+                "Target_RHEL",
+                "Target_RedHatJBossEAP",
+                // Complexity
+                "No_Flag_Convertible_OS"
+        );
+
+        // retrieve the QueryResults that was available in the working memory from the results
+        QueryResults queryResults= (QueryResults) results.get(QUERY_IDENTIFIER);
+        Assert.assertEquals(1, queryResults.size());
+
+        QueryResultsRow queryResultsRow = queryResults.iterator().next();
+        Assert.assertThat(queryResultsRow.get("report"), instanceOf(WorkloadInventoryReportModel.class));
+
+        WorkloadInventoryReportModel workloadInventoryReportModel = (WorkloadInventoryReportModel) queryResultsRow.get("report");
+        Assert.assertEquals("CentOS", workloadInventoryReportModel.getOsFamily());
+        Assert.assertTrue(workloadInventoryReportModel.getWorkloads().stream().anyMatch(target -> target.toLowerCase().contains("Oracle Weblogic".toLowerCase())));
+        Assert.assertTrue(workloadInventoryReportModel.getRecommendedTargetsIMS().stream().anyMatch(target -> target.toLowerCase().contains("Red Hat JBoss EAP".toLowerCase())));
+    }
+
+    @Test
+    public void testCentOSWithTomcat_ThenNoJBossEAPTarget() throws ParseException {
+        //Basic Fields
+        VMWorkloadInventoryModel vmWorkloadInventoryModel = new VMWorkloadInventoryModel();
+
+        vmWorkloadInventoryModel.setProvider("provider");
+        vmWorkloadInventoryModel.setVmName("vmName");
+        vmWorkloadInventoryModel.setDiskSpace(100000001L);
+        vmWorkloadInventoryModel.setMemory(4096L);
+        vmWorkloadInventoryModel.setCpuCores(4);
+        vmWorkloadInventoryModel.setGuestOSFullName("CentOS Linux release 7.6.1810 (Core)");
+        vmWorkloadInventoryModel.setOsProductName("productName");
+        vmWorkloadInventoryModel.setProduct("product");
+        vmWorkloadInventoryModel.setVersion("6.5");
+        vmWorkloadInventoryModel.setScanRunDate(new SimpleDateFormat("yyyy-M-dd'T'hh:mm:ss.S").parse("2019-09-18T14:52:45.871Z"));
+
+        List<String> systemServicesNames = new ArrayList<>();
+        systemServicesNames.add("unix_service");
+        systemServicesNames.add("tomcat");
+        vmWorkloadInventoryModel.setSystemServicesNames(systemServicesNames);
+
+        // define the list of commands you want to be executed by Drools
+        Map<String, Object> facts = new HashMap<>();
+        facts.put("vmWorkloadInventoryModel", vmWorkloadInventoryModel);
+        List<Command> commands = new ArrayList<>();
+        commands.addAll(Utils.newInsertCommands(facts));
+        commands.add(CommandFactory.newFireAllRules(NUMBER_OF_FIRED_RULE_KEY));
+        commands.add(CommandFactory.newQuery(QUERY_IDENTIFIER, "GetWorkloadInventoryReports"));
+        Map<String, Object> results = Utils.executeCommandsAndGetResults(kieSession, commands);
+
+        // check that the number of rules fired is what you expect
+        Assert.assertEquals(13, results.get(NUMBER_OF_FIRED_RULE_KEY));
+        // check the names of the rules fired are what you expect
+        Utils.verifyRulesFiredNames(this.agendaEventListener,
+                // BasicFields
+                "Copy basic fields and agenda controller",
+                // ReasonableDefaults
+                "Fill 'datacenter' field with reasonable default",
+                "Fill 'cluster' field with reasonable default",
+                "Fill 'host_name' field with reasonable default",
+                "Fill 'Insights' field with reasonable default",
+                "Fill 'osFamily' field with 'Other'",
+                // OSFamily
+                "Centos_OSFamily",
+                // Flags
+                // Workloads
+                "Workloads_Tomcat",
+                "SsaEnabled_System_Services_Present",
+                // Target
+                "Target_RHV",
+                "Target_OSP",
+                "Target_RHEL",
+                // Complexity
+                "No_Flag_Convertible_OS"
+        );
+
+        // retrieve the QueryResults that was available in the working memory from the results
+        QueryResults queryResults= (QueryResults) results.get(QUERY_IDENTIFIER);
+        Assert.assertEquals(1, queryResults.size());
+
+        QueryResultsRow queryResultsRow = queryResults.iterator().next();
+        Assert.assertThat(queryResultsRow.get("report"), instanceOf(WorkloadInventoryReportModel.class));
+
+        WorkloadInventoryReportModel workloadInventoryReportModel = (WorkloadInventoryReportModel) queryResultsRow.get("report");
+        Assert.assertEquals("CentOS", workloadInventoryReportModel.getOsFamily());
+        Assert.assertTrue(workloadInventoryReportModel.getWorkloads().stream().anyMatch(target -> target.toLowerCase().contains("Tomcat".toLowerCase())));
+        Assert.assertFalse(workloadInventoryReportModel.getRecommendedTargetsIMS().stream().anyMatch(target -> target.toLowerCase().contains("Red Hat JBoss EAP".toLowerCase())));
     }
 }
