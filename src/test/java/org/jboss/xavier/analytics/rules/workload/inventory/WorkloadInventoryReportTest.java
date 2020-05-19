@@ -78,7 +78,7 @@ public class WorkloadInventoryReportTest extends BaseIntegrationTest {
         Map<String, Object> results = Utils.executeCommandsAndGetResults(kieSession, commands);
 
         // check that the number of rules fired is what you expect
-        Assert.assertEquals(13, results.get(NUMBER_OF_FIRED_RULE_KEY));
+        Assert.assertEquals(12, results.get(NUMBER_OF_FIRED_RULE_KEY));
         // check the names of the rules fired are what you expect
         Utils.verifyRulesFiredNames(this.agendaEventListener,
                 // BasicFields
@@ -1305,13 +1305,14 @@ public class WorkloadInventoryReportTest extends BaseIntegrationTest {
         Map<String, Object> results = Utils.executeCommandsAndGetResults(kieSession, commands);
 
         // check that the number of rules fired is what you expect
-        Assert.assertEquals(6, results.get(NUMBER_OF_FIRED_RULE_KEY));
+        Assert.assertEquals(7, results.get(NUMBER_OF_FIRED_RULE_KEY));
         // check the names of the rules fired are what you expect
         Utils.verifyRulesFiredNames(this.agendaEventListener,
                 // BasicFields
                 "Copy basic fields and agenda controller",
                 //ReasonableDefaults
                 "Fill 'Insights' field with reasonable default", "Fill 'OS' fields with reasonable default",
+                "Fill 'osFamily' field with 'Other'",
                 // Flags
                 // Target
                 "Target_None",
@@ -1357,6 +1358,8 @@ public class WorkloadInventoryReportTest extends BaseIntegrationTest {
         Assert.assertEquals(WorkloadInventoryReportModel.COMPLEXITY_UNKNOWN, workloadInventoryReportModel.getComplexity());
         // Workloads
         Assert.assertTrue(workloadInventoryReportModel.getSsaEnabled());
+        // OSFamily
+        Assert.assertEquals("Other", workloadInventoryReportModel.getOsFamily());
     }
 
     @Test
@@ -1407,7 +1410,7 @@ public class WorkloadInventoryReportTest extends BaseIntegrationTest {
         Map<String, Object> results = Utils.executeCommandsAndGetResults(kieSession, commands);
 
         // check that the number of rules fired is what you expect
-        Assert.assertEquals(6, results.get(NUMBER_OF_FIRED_RULE_KEY));
+        Assert.assertEquals(7, results.get(NUMBER_OF_FIRED_RULE_KEY));
         // check the names of the rules fired are what you expect
         Utils.verifyRulesFiredNames(this.agendaEventListener,
                 // BasicFields
