@@ -5011,68 +5011,6 @@ public class WorkloadInventoryReportTest extends BaseIntegrationTest {
     }
 
     @Test
-    public void testRHELWithOracleJDK8_ThenOpenJDKShouldBeRecommendedTarget() throws ParseException {
-        //Basic Fields
-        VMWorkloadInventoryModel vmWorkloadInventoryModel = new VMWorkloadInventoryModel();
-
-        vmWorkloadInventoryModel.setProvider("provider");
-        vmWorkloadInventoryModel.setVmName("vmName");
-        vmWorkloadInventoryModel.setDiskSpace(100000001L);
-        vmWorkloadInventoryModel.setMemory(4096L);
-        vmWorkloadInventoryModel.setCpuCores(4);
-        vmWorkloadInventoryModel.setGuestOSFullName("Red Hat Enterprise Linux Server release 7.6 (Maipo)");
-        vmWorkloadInventoryModel.setOsProductName("productName");
-        vmWorkloadInventoryModel.setProduct("product");
-        vmWorkloadInventoryModel.setVersion("6.5");
-        vmWorkloadInventoryModel.setScanRunDate(new SimpleDateFormat("yyyy-M-dd'T'hh:mm:ss.S").parse("2019-09-18T14:52:45.871Z"));
-
-        Map<String, String> files = new HashMap<>();
-        files.put("/usr/java/latest/release", "JAVA_VERSION=\"1.8");
-        vmWorkloadInventoryModel.setFiles(files);
-
-        // define the list of commands you want to be executed by Drools
-        Map<String, Object> facts = new HashMap<>();
-        facts.put("vmWorkloadInventoryModel", vmWorkloadInventoryModel);
-        List<Command> commands = new ArrayList<>();
-        commands.addAll(Utils.newInsertCommands(facts));
-        commands.add(CommandFactory.newFireAllRules(NUMBER_OF_FIRED_RULE_KEY));
-        commands.add(CommandFactory.newQuery(QUERY_IDENTIFIER, "GetWorkloadInventoryReports"));
-        Map<String, Object> results = Utils.executeCommandsAndGetResults(kieSession, commands);
-
-        // check that the number of rules fired is what you expect
-        Assert.assertEquals(8, results.get(NUMBER_OF_FIRED_RULE_KEY));
-        // check the names of the rules fired are what you expect
-        Utils.verifyRulesFiredNames(this.agendaEventListener,
-                // BasicFields
-                "Copy basic fields and agenda controller",
-                // ReasonableDefaults
-                "Fill 'datacenter' field with reasonable default",
-                "Fill 'cluster' field with reasonable default",
-                "Fill 'host_name' field with reasonable default",
-                "Fill 'Insights' field with reasonable default",
-                // Flags
-                // Target
-                "Target_None",
-                // Complexity
-                "No_Flags_Not_Supported_OS",
-                // Workloads
-                "SsaDisabled_System_Services_Not_Present",
-                // OSFamily
-                "Ubuntu_OSFamily"
-        );
-
-        // retrieve the QueryResults that was available in the working memory from the results
-        QueryResults queryResults= (QueryResults) results.get(QUERY_IDENTIFIER);
-        Assert.assertEquals(1, queryResults.size());
-
-        QueryResultsRow queryResultsRow = queryResults.iterator().next();
-        Assert.assertThat(queryResultsRow.get("report"), instanceOf(WorkloadInventoryReportModel.class));
-
-        WorkloadInventoryReportModel workloadInventoryReportModel = (WorkloadInventoryReportModel) queryResultsRow.get("report");
-        Assert.assertEquals("Ubuntu", workloadInventoryReportModel.getOsFamily());
-    }
-
-    @Test
     public void testDebianFamily() throws ParseException {
         //Basic Fields
         VMWorkloadInventoryModel vmWorkloadInventoryModel = new VMWorkloadInventoryModel();
@@ -5363,80 +5301,6 @@ public class WorkloadInventoryReportTest extends BaseIntegrationTest {
         Map<String, Object> results = Utils.executeCommandsAndGetResults(kieSession, commands);
 
         // check that the number of rules fired is what you expect
-        Assert.assertEquals(13, results.get(NUMBER_OF_FIRED_RULE_KEY));
-        // check the names of the rules fired are what you expect
-        Utils.verifyRulesFiredNames(this.agendaEventListener,
-                // BasicFields
-                "Copy basic fields and agenda controller",
-                // ReasonableDefaults
-                "Fill 'datacenter' field with reasonable default",
-                "Fill 'cluster' field with reasonable default",
-                "Fill 'host_name' field with reasonable default",
-                "Fill 'Insights' field with reasonable default",
-                // OSFamily
-                "Centos_OSFamily",
-                // Flags
-                // Workloads
-                "Workloads_Weblogic",
-                "SsaEnabled_System_Services_Present",
-                "Workloads_Oracle_JDK_11_On_Linux",
-                // Target
-                "Target_RHV",
-                "Target_OSP",
-                "Target_RHEL",
-                // Complexity
-                "No_Flag_Convertible_OS"
-        );
-
-        // retrieve the QueryResults that was available in the working memory from the results
-        QueryResults queryResults= (QueryResults) results.get(QUERY_IDENTIFIER);
-        Assert.assertEquals(1, queryResults.size());
-
-        QueryResultsRow queryResultsRow = queryResults.iterator().next();
-        Assert.assertThat(queryResultsRow.get("report"), instanceOf(WorkloadInventoryReportModel.class));
-
-        WorkloadInventoryReportModel workloadInventoryReportModel = (WorkloadInventoryReportModel) queryResultsRow.get("report");
-        Assert.assertEquals("CentOS", workloadInventoryReportModel.getOsFamily());
-        Assert.assertTrue(workloadInventoryReportModel.getWorkloads().stream().anyMatch(target -> target.toLowerCase().contains("Oracle JDK 11".toLowerCase())));
-        Assert.assertTrue(workloadInventoryReportModel.getWorkloads().stream().anyMatch(target -> target.toLowerCase().contains("Oracle Weblogic".toLowerCase())));
-        Assert.assertFalse(workloadInventoryReportModel.getRecommendedTargetsIMS().stream().anyMatch(target -> target.toLowerCase().contains("OpenJDK".toLowerCase())));
-    }
-
-    @Test
-    public void testCentOSWithOracleJDK11AndWeblogic_ThenOpenJDKShouldNotBeRecommendedTarget() throws ParseException {
-        //Basic Fields
-        VMWorkloadInventoryModel vmWorkloadInventoryModel = new VMWorkloadInventoryModel();
-
-        vmWorkloadInventoryModel.setProvider("provider");
-        vmWorkloadInventoryModel.setVmName("vmName");
-        vmWorkloadInventoryModel.setDiskSpace(100000001L);
-        vmWorkloadInventoryModel.setMemory(4096L);
-        vmWorkloadInventoryModel.setCpuCores(4);
-        vmWorkloadInventoryModel.setGuestOSFullName("CentOS Linux release 7.6.1810 (Core)");
-        vmWorkloadInventoryModel.setOsProductName("productName");
-        vmWorkloadInventoryModel.setProduct("product");
-        vmWorkloadInventoryModel.setVersion("6.5");
-        vmWorkloadInventoryModel.setScanRunDate(new SimpleDateFormat("yyyy-M-dd'T'hh:mm:ss.S").parse("2019-09-18T14:52:45.871Z"));
-
-        Map<String, String> files = new HashMap<>();
-        files.put("/usr/java/latest/release", "JAVA_VERSION=\"11");
-        vmWorkloadInventoryModel.setFiles(files);
-
-        List<String> systemServicesNames = new ArrayList<>();
-        systemServicesNames.add("unix_service");
-        systemServicesNames.add("wls_adminmanager");
-        vmWorkloadInventoryModel.setSystemServicesNames(systemServicesNames);
-
-        // define the list of commands you want to be executed by Drools
-        Map<String, Object> facts = new HashMap<>();
-        facts.put("vmWorkloadInventoryModel", vmWorkloadInventoryModel);
-        List<Command> commands = new ArrayList<>();
-        commands.addAll(Utils.newInsertCommands(facts));
-        commands.add(CommandFactory.newFireAllRules(NUMBER_OF_FIRED_RULE_KEY));
-        commands.add(CommandFactory.newQuery(QUERY_IDENTIFIER, "GetWorkloadInventoryReports"));
-        Map<String, Object> results = Utils.executeCommandsAndGetResults(kieSession, commands);
-
-        // check that the number of rules fired is what you expect
         Assert.assertEquals(14, results.get(NUMBER_OF_FIRED_RULE_KEY));
         // check the names of the rules fired are what you expect
         Utils.verifyRulesFiredNames(this.agendaEventListener,
@@ -5475,7 +5339,6 @@ public class WorkloadInventoryReportTest extends BaseIntegrationTest {
         Assert.assertTrue(workloadInventoryReportModel.getWorkloads().stream().anyMatch(target -> target.toLowerCase().contains("Oracle JDK 11".toLowerCase())));
         Assert.assertTrue(workloadInventoryReportModel.getWorkloads().stream().anyMatch(target -> target.toLowerCase().contains("Oracle Weblogic".toLowerCase())));
         Assert.assertFalse(workloadInventoryReportModel.getRecommendedTargetsIMS().stream().anyMatch(target -> target.toLowerCase().contains("OpenJDK".toLowerCase())));
-        Assert.assertTrue(workloadInventoryReportModel.getRecommendedTargetsIMS().stream().anyMatch(target -> target.toLowerCase().contains("Red Hat JBoss EAP".toLowerCase())));
     }
 
     @Test
