@@ -39,7 +39,7 @@ public class WorkloadInventoryReportModel
     public static final String TARGET_RHV = "Red Hat Virtualization";
     public static final String TARGET_OSP = "Red Hat OpenStack Platform";
     public static final String TARGET_RHEL = "Red Hat Enterprise Linux";
-    public static final String TARGET_OCP = "Red Hat OpenShift virtualization";
+    public static final String TARGET_OCP = "Red Hat OpenShift Virtualization";
 
     @Id
     @GeneratedValue(strategy = javax.persistence.GenerationType.AUTO, generator = "WORKLOADINVENTORYREPORTMODEL_ID_GENERATOR")
