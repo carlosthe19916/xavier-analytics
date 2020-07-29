@@ -323,7 +323,7 @@ public class TargetsTest extends BaseTest {
         Assert.assertEquals(2, report.getRecommendedTargetsIMS().size());
         Assert.assertTrue(report.getRecommendedTargetsIMS().stream().anyMatch(target -> target.toLowerCase().contains(WorkloadInventoryReportModel.TARGET_RHV.toLowerCase())));
         Assert.assertTrue(report.getRecommendedTargetsIMS().stream().anyMatch(target -> target.toLowerCase().contains(WorkloadInventoryReportModel.TARGET_OSP.toLowerCase())));
-        Assert.assertFalse(report.getRecommendedTargetsIMS().stream().anyMatch(target -> target.toLowerCase().contains("RHEL".toLowerCase())));
+        Assert.assertFalse(report.getRecommendedTargetsIMS().stream().anyMatch(target -> target.toLowerCase().contains(WorkloadInventoryReportModel.TARGET_RHEL.toLowerCase())));
         Assert.assertFalse(report.getRecommendedTargetsIMS().stream().anyMatch(target -> target.toLowerCase().contains("None".toLowerCase())));
     }
 
